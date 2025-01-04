@@ -19,7 +19,7 @@ export default function Home() {
 
           {/* CTA Button */}
           <a
-            href="/dashboard"
+            href="/login"
             className="inline-block bg-yellow-300 text-blue-900 font-bold py-3 px-6 rounded-full shadow-lg hover:bg-yellow-400 transition-all duration-300 animate-bounce"
           >
             Get Started

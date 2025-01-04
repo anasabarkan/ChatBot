@@ -41,11 +41,11 @@ app.post("/api/chatbot", async (req, res) => {
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI, {}) // Remove deprecated options
   .then(() => console.log("MongoDB connected successfully!"))
   .catch((err) => {
     console.error("Error connecting to MongoDB:", err.message);
-    process.exit(1);
+    process.exit(1); // Exit the process if the connection fails
   });
 
 // Import routes

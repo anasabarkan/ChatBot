@@ -1,48 +1,69 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ChatPopup({ onTaskUpdate }) {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [selectedAction, setSelectedAction] = useState(''); // Track selected action
+  const [input, setInput] = useState("");
+  const [selectedAction, setSelectedAction] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  // Handle sending a message to the chatbot API
   const handleSendMessage = async () => {
     if (!input.trim() || !selectedAction) {
-      toast.error('Please enter a message and select an action.');
+      toast.error("Please enter a message and select an action.");
       return;
     }
 
-    // Add user message to the chat
-    const newMessage = { sender: 'user', text: `${selectedAction}: ${input}` };
-    setMessages([...messages, newMessage]);
+    const userMessage = `${selectedAction}: ${input}`;
+    setMessages([...messages, { sender: "user", text: userMessage }]);
 
     try {
-      // Send action and message to the backend
-      const response = await axios.post('http://localhost:5000/api/chatbot', {
-        action: selectedAction.toLowerCase(),
-        message: input,
-      });
-
-      // Show the bot response
-      const botResponse = { sender: 'bot', text: response.data.reply };
-      setMessages((prev) => [...prev, botResponse]);
-
-      // If a task is created/updated/deleted, notify the user
-      if (response.data.taskUpdated || response.data.createdTask) {
-        onTaskUpdate(); // Trigger parent task update
-        toast.success(`Task ${selectedAction.toLowerCase()}ed successfully!`);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You are not logged in. Please log in to continue.");
+        return;
       }
+
+      const url = {
+        "Create Task": "http://localhost:5000/api/tasks",
+        "Update Task": `http://localhost:5000/api/tasks/${input.split(":")[0].trim()}`,
+        "Delete Task": `http://localhost:5000/api/tasks/${input.trim()}`,
+      };
+
+      let response;
+
+      if (selectedAction === "Create Task") {
+        response = await axios.post(
+          url[selectedAction],
+          { message: input },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } else if (selectedAction === "Delete Task") {
+        response = await axios.delete(url[selectedAction], {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } else {
+        const [taskId, taskUpdate] = input.split(":");
+        response = await axios.put(
+          url[selectedAction],
+          { title: taskUpdate.trim() },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+
+      const botResponse = response.data.task || response.data.message;
+      setMessages((prev) => [...prev, { sender: "bot", text: JSON.stringify(botResponse) }]);
+
+      if (onTaskUpdate) onTaskUpdate();
+      toast.success(`${selectedAction} completed successfully!`);
     } catch (error) {
-      console.error('Error communicating with the chatbot:', error);
-      toast.error('Failed to process the request.');
+      console.error("Error interacting with API:", error.message);
+      toast.error("Failed to process the request.");
     }
 
-    setInput('');
-    setSelectedAction('');
+    setInput("");
+    setSelectedAction("");
   };
 
   return (
@@ -64,20 +85,28 @@ export default function ChatPopup({ onTaskUpdate }) {
           </div>
 
           {/* Chat Body */}
-          <div className="p-4 h-60 overflow-y-auto bg-gray-50">
+          <div
+            className={`p-4 h-60 bg-gray-50 ${
+              messages.length > 0 ? "overflow-y-auto" : "overflow-hidden"
+            }`}
+          >
             {messages.length === 0 ? (
-              <p className="text-gray-400 text-sm text-center italic">No messages yet. Start a conversation...</p>
+              <p className="text-gray-400 text-sm text-center italic">
+                No messages yet. Start a conversation...
+              </p>
             ) : (
               messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`mb-2 flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`mb-2 flex ${
+                    msg.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
                   <span
                     className={`px-4 py-2 text-sm rounded-lg shadow ${
-                      msg.sender === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-200 text-gray-800'
+                      msg.sender === "user"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-800"
                     }`}
                   >
                     {msg.text}
@@ -108,14 +137,14 @@ export default function ChatPopup({ onTaskUpdate }) {
 
           {/* Task Action Buttons */}
           <div className="flex justify-between px-4 py-2 bg-gray-100 rounded-b-xl">
-            {['Create Task', 'Update Task', 'Delete Task', 'Finish Task'].map((action) => (
+            {["Create Task", "Update Task", "Delete Task"].map((action) => (
               <button
                 key={action}
                 onClick={() => setSelectedAction(action)}
                 className={`text-xs font-bold px-3 py-2 rounded-full transition-all duration-300 ${
                   selectedAction === action
-                    ? 'bg-blue-500 text-white shadow-lg scale-105'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-md'
+                    ? "bg-blue-500 text-white shadow-lg scale-105"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-md"
                 }`}
               >
                 {action}

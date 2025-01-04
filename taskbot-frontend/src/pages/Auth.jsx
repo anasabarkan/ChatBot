@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from '../components/Navbar';
+
 
 export default function Auth() {
   const [isRegister, setIsRegister] = useState(false); // Toggle between Login/Register
@@ -49,7 +51,9 @@ export default function Auth() {
   };
 
   return (
+    
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-700">
+      <Navbar />
       <div className="bg-white shadow-2xl rounded-lg p-8 w-full max-w-sm animate-fade-in">
         <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
           {isRegister ? 'Create an Account 🚀' : 'Welcome Back 👋'}

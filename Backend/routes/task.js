@@ -4,9 +4,9 @@ const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/", protect, create);
-router.get("/", protect, getAll);
-router.put("/:id", protect, update);
-router.delete("/:id", protect, remove);
+router.post("/", protect, create); // Create Task
+router.get("/", protect, getAll); // Get All Tasks
+router.put("/:id", protect, update); // Update Task
+router.delete("/:id", protect, remove); // Delete Task
 
 module.exports = router;
