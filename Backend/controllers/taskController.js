@@ -81,16 +81,61 @@ const getAll = async (req, res) => {
 // Update Task
 const update = async (req, res) => {
   const { id } = req.params;
-  const { title, description, priority, status, dueDate } = req.body;
+  const { updateInstruction } = req.body; // Natural language update instruction
 
   if (!id) {
     return res.status(400).json({ error: "Task ID is required." });
   }
 
+  if (!updateInstruction || typeof updateInstruction !== "string") {
+    return res.status(400).json({ error: "Update instruction is required as a string." });
+  }
+
   try {
+    // Generate update data using LLM
+    const prompt = `
+      Based on the following instruction, update the task data in strict JSON format:
+      Instruction: "${updateInstruction}"
+      Fields to update: { "title", "description", "priority", "status", "dueDate" }
+      Respond in the following format:
+      {
+        "title": "string (optional)",
+        "description": "string (optional)",
+        "priority": "low | medium | high (optional)",
+        "status": "pending | completed (optional)",
+        "dueDate": "YYYY-MM-DD or null (optional)"
+      }
+    `;
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
+
+    const rawReply = result.response.text();
+    console.log("Raw Reply from Gemini:", rawReply);
+
+    let updateData;
+    try {
+      const jsonMatch = rawReply.match(/\{[\s\S]*\}/)?.[0];
+      if (!jsonMatch) {
+        throw new Error("No valid JSON found in LLM response.");
+      }
+      updateData = JSON.parse(jsonMatch);
+
+      // Remove null fields to avoid validation errors
+      Object.keys(updateData).forEach((key) => {
+        if (updateData[key] === null) {
+          delete updateData[key];
+        }
+      });
+    } catch (error) {
+      console.error("Error parsing LLM response:", rawReply);
+      return res.status(500).json({ error: "Invalid JSON format from LLM." });
+    }
+
+    // Update the task in MongoDB
     const updatedTask = await Task.findByIdAndUpdate(
       id,
-      { title, description, priority, status, dueDate },
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -104,6 +149,7 @@ const update = async (req, res) => {
     res.status(500).json({ error: "Failed to update task." });
   }
 };
+
 
 // Remove Task
 const remove = async (req, res) => {

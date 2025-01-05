@@ -25,41 +25,43 @@ export default function ChatPopup({ onTaskUpdate }) {
         return;
       }
 
-      const url = {
-        "Create Task": "http://localhost:5000/api/tasks",
-        "Update Task": `http://localhost:5000/api/tasks/${input.split(":")[0].trim()}`,
-        "Delete Task": `http://localhost:5000/api/tasks/${input.trim()}`,
-      };
-
       let response;
 
       if (selectedAction === "Create Task") {
         response = await axios.post(
-          url[selectedAction],
+          "http://localhost:5000/api/tasks",
           { message: input },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-      } else if (selectedAction === "Delete Task") {
-        response = await axios.delete(url[selectedAction], {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } else {
-        const [taskId, taskUpdate] = input.split(":");
+      } else if (selectedAction === "Update Task") {
+        // Handle Update Task
+        const [taskId, updateInstruction] = input.split(":");
+
+        if (!taskId || !updateInstruction) {
+          toast.error("Invalid input format. Please provide 'Task ID: Update Instruction'.");
+          return;
+        }
+
+        // Send Update Request to the Backend
         response = await axios.put(
-          url[selectedAction],
-          { title: taskUpdate.trim() },
+          `http://localhost:5000/api/tasks/${taskId.trim()}`,
+          { updateInstruction: updateInstruction.trim() },
           { headers: { Authorization: `Bearer ${token}` } }
         );
+      } else if (selectedAction === "Delete Task") {
+        response = await axios.delete(`http://localhost:5000/api/tasks/${input.trim()}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
       }
 
       const botResponse = response.data.task || response.data.message;
       setMessages((prev) => [...prev, { sender: "bot", text: JSON.stringify(botResponse) }]);
 
-      if (onTaskUpdate) onTaskUpdate();
+      if (onTaskUpdate) onTaskUpdate(); // Refresh tasks if required
       toast.success(`${selectedAction} completed successfully!`);
     } catch (error) {
-      console.error("Error interacting with API:", error.message);
-      toast.error("Failed to process the request.");
+      console.error("Error interacting with API:", error.response?.data || error.message);
+      toast.error(error.response?.data?.error || "Failed to process the request.");
     }
 
     setInput("");
