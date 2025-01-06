@@ -85,77 +85,10 @@ export default function TaskCard() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-8 flex flex-col gap-6 items-center">
+    <div className="p-8 flex flex-col gap-6 items-center">
       {error && <div className="text-red-500">{error}</div>}
 
       {/* Add Task Form */}
-      <div className="h-full max-w-md bg-white p-6 rounded-lg shadow-md mb-6">
-        <h3 className="text-xl font-bold mb-4">Add a New Task</h3>
-        <form onSubmit={handleAddTask} className="space-y-4">
-          <div>
-            <label htmlFor="title" className="block text-gray-700 font-medium mb-1">
-              Title
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label htmlFor="description" className="block text-gray-700 font-medium mb-1">
-              Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows="3"
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            ></textarea>
-          </div>
-          <div>
-            <label htmlFor="dueDate" className="block text-gray-700 font-medium mb-1">
-              Due Date
-            </label>
-            <input
-              type="date"
-              id="dueDate"
-              name="dueDate"
-              value={formData.dueDate}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label htmlFor="priority" className="block text-gray-700 font-medium mb-1">
-              Priority
-            </label>
-            <select
-              id="priority"
-              name="priority"
-              value={formData.priority}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition-all"
-          >
-            Add Task
-          </button>
-        </form>
-      </div>
 
       {/* Display Tasks */}
       {tasks.map((task) => (
@@ -184,6 +117,8 @@ export default function TaskCard() {
               >
                 Complete
               </button>
+
+              {/* Delete button inside the card */}
               <button
                 onClick={() => handleDeleteTask(task._id)}
                 className={`bg-red-500 text-white px-4 py-1.5 rounded-full shadow-md hover:bg-red-600 transition-all`}

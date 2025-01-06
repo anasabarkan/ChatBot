@@ -34,7 +34,6 @@ export default function ChatPopup({ onTaskUpdate }) {
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else if (selectedAction === "Update Task") {
-        // Handle Update Task
         const [taskId, updateInstruction] = input.split(":");
 
         if (!taskId || !updateInstruction) {
@@ -42,7 +41,6 @@ export default function ChatPopup({ onTaskUpdate }) {
           return;
         }
 
-        // Send Update Request to the Backend
         response = await axios.put(
           `http://localhost:5000/api/tasks/${taskId.trim()}`,
           { updateInstruction: updateInstruction.trim() },
@@ -57,7 +55,7 @@ export default function ChatPopup({ onTaskUpdate }) {
       const botResponse = response.data.task || response.data.message;
       setMessages((prev) => [...prev, { sender: "bot", text: JSON.stringify(botResponse) }]);
 
-      if (onTaskUpdate) onTaskUpdate(); // Refresh tasks if required
+      if (onTaskUpdate) onTaskUpdate();
       toast.success(`${selectedAction} completed successfully!`);
     } catch (error) {
       console.error("Error interacting with API:", error.response?.data || error.message);
@@ -70,28 +68,20 @@ export default function ChatPopup({ onTaskUpdate }) {
 
   return (
     <div>
-      {/* Chat Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-full shadow-lg hover:scale-110 transform transition-all duration-300 ease-in-out"
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-purple-500 to-blue-500 text-white p-4 rounded-full shadow-lg hover:scale-110 transform transition-all duration-300 ease-in-out"
       >
         💬
       </button>
 
-      {/* Chat Popup */}
       {isOpen && (
         <div className="fixed bottom-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 transform animate-fade-in">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 text-center font-extrabold rounded-t-xl">
+          <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 text-center font-extrabold rounded-t-xl">
             TaskBot Chat
           </div>
 
-          {/* Chat Body */}
-          <div
-            className={`p-4 h-60 bg-gray-50 ${
-              messages.length > 0 ? "overflow-y-auto" : "overflow-hidden"
-            }`}
-          >
+          <div className={`p-4 h-60 bg-gray-50 ${messages.length > 0 ? "overflow-y-auto" : "overflow-hidden"}`}>
             {messages.length === 0 ? (
               <p className="text-gray-400 text-sm text-center italic">
                 No messages yet. Start a conversation...
@@ -100,14 +90,12 @@ export default function ChatPopup({ onTaskUpdate }) {
               messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`mb-2 flex ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`mb-2 flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <span
                     className={`px-4 py-2 text-sm rounded-lg shadow ${
                       msg.sender === "user"
-                        ? "bg-blue-500 text-white"
+                        ? "bg-purple-500 text-white"
                         : "bg-gray-200 text-gray-800"
                     }`}
                   >
@@ -118,7 +106,6 @@ export default function ChatPopup({ onTaskUpdate }) {
             )}
           </div>
 
-          {/* Input Field */}
           <div className="p-4 bg-white border-t">
             <div className="flex items-center gap-2">
               <input
@@ -126,18 +113,17 @@ export default function ChatPopup({ onTaskUpdate }) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
-                className="w-full border rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                className="w-full border rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
               />
               <button
                 onClick={handleSendMessage}
-                className="bg-blue-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-blue-600 transition-all"
+                className="bg-purple-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-purple-600 transition-all"
               >
                 Send
               </button>
             </div>
           </div>
 
-          {/* Task Action Buttons */}
           <div className="flex justify-between px-4 py-2 bg-gray-100 rounded-b-xl">
             {["Create Task", "Update Task", "Delete Task"].map((action) => (
               <button
@@ -145,7 +131,7 @@ export default function ChatPopup({ onTaskUpdate }) {
                 onClick={() => setSelectedAction(action)}
                 className={`text-xs font-bold px-3 py-2 rounded-full transition-all duration-300 ${
                   selectedAction === action
-                    ? "bg-blue-500 text-white shadow-lg scale-105"
+                    ? "bg-purple-500 text-white shadow-lg scale-105"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300 hover:shadow-md"
                 }`}
               >

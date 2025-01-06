@@ -11,10 +11,10 @@ export default function Home() {
       <div className="flex items-center justify-center h-screen">
         <div className="text-center px-6 md:px-12">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in">
-            Welcome to <span className="text-yellow-300">TaskBot</span>
+            Welcome to <span className="text-yellow-300">TaskS</span>
           </h1>
           <p className="text-lg md:text-xl mb-8 text-gray-100 animate-slide-in">
-            Organize, prioritize, and conquer your tasks with an AI-powered chatbot.
+          Manage, prioritize, and accomplish your tasks with Chatbot.
           </p>
 
           {/* CTA Button */}
