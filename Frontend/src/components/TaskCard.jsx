@@ -16,7 +16,7 @@ export default function TaskCard() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/tasks', {
+        const response = await axios.get('https://chatbot-tu2h.onrender.com/api/tasks', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTasks(response.data); // Update tasks state with fetched data
@@ -38,7 +38,7 @@ export default function TaskCard() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/tasks',
+        'https://chatbot-tu2h.onrender.com/api/tasks',
         formData,
         {
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -56,7 +56,7 @@ export default function TaskCard() {
   const handleUpdateTask = async (taskId, updatedData) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `https://chatbot-tu2h.onrender.com/api/tasks/${taskId}`,
         updatedData,
         {
           headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -74,7 +74,7 @@ export default function TaskCard() {
   // Delete a task
   const handleDeleteTask = async (taskId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${taskId}`, {
+      await axios.delete(`https://chatbot-tu2h.onrender.com/api/tasks/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
@@ -85,7 +85,7 @@ export default function TaskCard() {
   };
 
   return (
-    <div className="p-8 flex flex-col gap-6 items-center">
+    <div className="mt-6 flex flex-col gap-6 items-center">
       {error && <div className="text-red-500">{error}</div>}
 
       {/* Add Task Form */}
@@ -94,7 +94,7 @@ export default function TaskCard() {
       {tasks.map((task) => (
         <div
           key={task._id}
-          className={`rounded-lg border p-8 w-full max-w-md hover:shadow-2xl hover:scale-105 transition-all duration-300 ease-in-out`}
+          className={`rounded-lg border py-2 px-2 w-full max-w-md hover:shadow-2xl hover:scale-105 transition-all duration-300 ease-in-out`}
         >
           {/* Task Header */}
           <div className="flex justify-between items-center mb-2">
@@ -111,19 +111,19 @@ export default function TaskCard() {
           <div className="flex items-center justify-between text-sm text-gray-500">
             <span className="font-medium">📅 Due: {new Date(task.dueDate).toLocaleDateString()}</span>
             <div className="flex gap-2">
-              <button
+              {/* <button
                 onClick={() => handleUpdateTask(task._id, { status: 'completed' })}
                 className={`bg-green-500 text-white px-4 py-1.5 rounded-full shadow-md hover:bg-green-600 transition-all`}
               >
                 Complete
-              </button>
+              </button> */}
 
               {/* Delete button inside the card */}
               <button
                 onClick={() => handleDeleteTask(task._id)}
-                className={`bg-red-500 text-white px-4 py-1.5 rounded-full shadow-md hover:bg-red-600 transition-all`}
+                className={`bg-green-500 text-white px-4 py-1.5 rounded-full shadow-md hover:bg-red-600 transition-all`}
               >
-                Delete
+                Complete
               </button>
             </div>
           </div>

@@ -24,8 +24,8 @@ export default function Auth() {
 
     try {
       const endpoint = isRegister
-        ? 'http://localhost:5000/api/auth/register'
-        : 'http://localhost:5000/api/auth/login';
+        ? 'https://chatbot-tu2h.onrender.com/api/auth/register'
+        : 'https://chatbot-tu2h.onrender.com/api/auth/login';
 
       const payload = isRegister ? { name, email, password } : { email, password };
 

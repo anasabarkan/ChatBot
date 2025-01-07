@@ -29,7 +29,7 @@ export default function ChatPopup({ onTaskUpdate }) {
 
       if (selectedAction === "Create Task") {
         response = await axios.post(
-          "http://localhost:5000/api/tasks",
+          "https://chatbot-tu2h.onrender.com/api/tasks",
           { message: input },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -42,12 +42,12 @@ export default function ChatPopup({ onTaskUpdate }) {
         }
 
         response = await axios.put(
-          `http://localhost:5000/api/tasks/${taskId.trim()}`,
+          `https://chatbot-tu2h.onrender.com/api/tasks/${taskId.trim()}`,
           { updateInstruction: updateInstruction.trim() },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else if (selectedAction === "Delete Task") {
-        response = await axios.delete(`http://localhost:5000/api/tasks/${input.trim()}`, {
+        response = await axios.delete(`https://chatbot-tu2h.onrender.com/api/tasks/${input.trim()}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -117,14 +117,14 @@ export default function ChatPopup({ onTaskUpdate }) {
               />
               <button
                 onClick={handleSendMessage}
-                className="bg-purple-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-purple-600 transition-all"
+                className="bg-purple-500 text-white px-3 py-3 rounded-full shadow-md hover:bg-purple-600 transition-all"
               >
-                Send
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send-horizontal"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z"/><path d="M6 12h16"/></svg>
               </button>
             </div>
           </div>
 
-          <div className="flex justify-between px-4 py-2 bg-gray-100 rounded-b-xl">
+          <div className="flex justify-between px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-b-xl">
             {["Create Task", "Update Task", "Delete Task"].map((action) => (
               <button
                 key={action}
